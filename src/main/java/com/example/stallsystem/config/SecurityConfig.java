@@ -44,11 +44,6 @@ public class SecurityConfig {
                         // AI 接口放行（方便 Postman 测试，上线前可改为需要认证）
                         .requestMatchers("/api/chat/**", "/api/complaint/**").permitAll()
                         .requestMatchers("/api/product/recommend").permitAll()
-                        // 前端静态资源放行（打包成 jar 后由 Spring Boot 直接对外提供页面）
-                        .requestMatchers(
-                                "/", "/index.html", "/favicon.ico", "/favicon.svg", "/icons.svg",
-                                "/assets/**", "/error"
-                        ).permitAll()
                         // 其他接口都需要认证
                         .anyRequest().authenticated()
                 )
