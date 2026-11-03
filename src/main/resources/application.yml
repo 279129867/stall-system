@@ -1,0 +1,68 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: stall-system
+
+  # 数据源
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/stall_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 123456
+
+  # Redis（Memurai）
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:          # 如果 Memurai 没设密码就留空
+      database: 0
+
+  # ========== Spring AI 配置（AI 模块） ==========
+  ai:
+    # OpenAI 兼容接口（DeepSeek 对话模型）
+    openai:
+      base-url: https://api.deepseek.com
+      api-key: sk-55750566ab794b03972b76f9d98efc17
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+      # Embedding 单独配置成硅基流动
+      embedding:
+        base-url: https://api.siliconflow.cn
+        api-key: sk-gcwiqycavapcjzwlbemzomxhwrflmbwvhpqrjnyrcptsmuwd
+        options:
+          model: BAAI/bge-m3
+    # Chroma 向量数据库
+    vectorstore:
+      chroma:
+        host: http://localhost:8000
+        collection-name: stall_knowledge_v3
+        # 相似度阈值，低于此值的结果不返回
+        similarity-threshold: 0.6
+        # 每次查询返回的最大文档数
+        top-k: 3
+
+# MyBatis-Plus
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+# JWT 配置
+jwt:
+  # 密钥（生产环境请改长，这里本地开发用）
+  secret: stall-system-secret-key-2026-please-change-in-production
+  # 过期时间：24 小时（毫秒）
+  expiration: 86400000
+  # 请求头
+  header: Authorization
+  # token 前缀
+  prefix: "Bearer "
