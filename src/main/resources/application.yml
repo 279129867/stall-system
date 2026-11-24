@@ -1,9 +1,15 @@
 server:
   port: 8080
+  # 优雅停机：等在途请求处理完再退出，配合线程池的 waitForTasksToCompleteOnShutdown
+  shutdown: graceful
 
 spring:
   application:
     name: stall-system
+
+  # 优雅停机的等待上限
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 
   # 数据源
   datasource:
@@ -11,6 +17,10 @@ spring:
     url: jdbc:mysql://localhost:3306/stall_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
     password: 123456
+    hikari:
+      # 看板并行会同时占用 4 个连接，默认 10 在并发下容易被排队拖慢
+      maximum-pool-size: 20
+      minimum-idle: 5
 
   # Redis（Memurai）
   data:
@@ -66,3 +76,10 @@ jwt:
   header: Authorization
   # token 前缀
   prefix: "Bearer "
+
+# 日志：把 traceId 打出来，异步链路才能串起来看
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-}] %logger{36} - %msg%n"
+  level:
+    com.example.stallsystem: INFO
